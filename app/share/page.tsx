@@ -67,11 +67,16 @@ export default function SharePage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-        Share Your Music
-      </h1>
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          Share Your Music
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Tell the world about a song or album you love
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Song/Album Title *
@@ -143,18 +148,18 @@ export default function SharePage() {
           </p>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 pt-2">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition"
+            className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-[1.02] shadow-md"
           >
-            {loading ? "Sharing..." : "Share"}
+            {loading ? "Sharing..." : "🎵 Share"}
           </button>
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition font-semibold"
           >
             Cancel
           </button>

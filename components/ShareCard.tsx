@@ -124,7 +124,7 @@ export default function ShareCard({ share }: ShareCardProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700">
       <div className="flex items-start space-x-4">
         <Link href={`/profile/${share.user_id}`}>
           {share.users.avatar_url ? (

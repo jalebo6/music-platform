@@ -138,7 +138,7 @@ export default function ProfilePage() {
 
   return (
     <div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mb-8">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 mb-8 border border-gray-100 dark:border-gray-700">
         <div className="flex items-start space-x-6">
           {profile.avatar_url ? (
             <Image
@@ -169,10 +169,10 @@ export default function ProfilePage() {
               ) : currentUser ? (
                 <button
                   onClick={handleFollow}
-                  className={`px-6 py-2 rounded-lg transition ${
+                  className={`px-6 py-2 rounded-xl font-semibold transition-all transform hover:scale-105 shadow-md ${
                     isFollowing
                       ? "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                      : "bg-blue-500 hover:bg-blue-600 text-white"
+                      : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
                   }`}
                 >
                   {isFollowing ? "Following" : "Follow"}
