@@ -10,6 +10,7 @@ export default function Navigation() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -51,56 +52,107 @@ export default function Navigation() {
     router.push("/");
   }
 
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/discover?q=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery("");
+    }
+  }
+
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 shadow-sm">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <nav className="sticky top-0 z-50 bg-[#14181c] border-b border-[#456]">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:scale-105 transition-transform">
-              <span className="text-white text-xl font-bold">🎵</span>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent hidden sm:block">
+          {/* Left: Logo */}
+          <Link href="/" className="flex items-center space-x-2 group flex-shrink-0">
+            <span className="text-2xl">🎵</span>
+            <span className="text-lg font-bold text-white hidden sm:block">
               MusicShare
             </span>
           </Link>
 
+          {/* Center: Search (desktop only when logged in) */}
+          {user && (
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-8">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search albums, artists, songs..."
+                  className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-2 pl-10 focus:outline-none focus:border-[#00c030] transition-colors"
+                />
+                <svg
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#678]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+            </form>
+          )}
+
           {user ? (
             <>
-              {/* Desktop Navigation */}
-              <div className="hidden md:flex items-center space-x-8">
+              {/* Right: Navigation + Profile (desktop) */}
+              <div className="hidden md:flex items-center space-x-6">
                 <Link
                   href="/"
-                  className={`font-medium transition-colors ${
+                  className={`text-sm font-semibold transition-colors ${
                     isActive("/")
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                      ? "text-white"
+                      : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Feed
+                  Music
                 </Link>
                 <Link
-                  href="/discover"
-                  className={`font-medium transition-colors ${
-                    isActive("/discover")
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  href="/search"
+                  className={`text-sm font-semibold transition-colors ${
+                    isActive("/search")
+                      ? "text-white"
+                      : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Discover
+                  Search
                 </Link>
                 <Link
-                  href="/share"
-                  className={`font-medium transition-colors ${
-                    isActive("/share")
-                      ? "text-indigo-600 dark:text-indigo-400"
-                      : "text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                  href="/lists"
+                  className={`text-sm font-semibold transition-colors ${
+                    isActive("/lists")
+                      ? "text-white"
+                      : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Share
+                  Lists
                 </Link>
+                <Link
+                  href="/members"
+                  className={`text-sm font-semibold transition-colors ${
+                    isActive("/members")
+                      ? "text-white"
+                      : "text-[#9ab] hover:text-white"
+                  }`}
+                >
+                  Members
+                </Link>
+                <Link
+                  href="/journal"
+                  className={`text-sm font-semibold transition-colors ${
+                    isActive("/journal")
+                      ? "text-white"
+                      : "text-[#9ab] hover:text-white"
+                  }`}
+                >
+                  Journal
+                </Link>
+                
+                {/* Profile Avatar */}
                 <Link
                   href={`/profile/${user.id}`}
                   className="flex items-center space-x-2 group"
@@ -109,19 +161,20 @@ export default function Navigation() {
                     <Image
                       src={profile.avatar_url}
                       alt={profile.name || "User"}
-                      width={36}
-                      height={36}
-                      className="rounded-full ring-2 ring-transparent group-hover:ring-indigo-500 transition-all"
+                      width={32}
+                      height={32}
+                      className="rounded-full ring-2 ring-transparent group-hover:ring-[#00c030] transition-all"
                     />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold ring-2 ring-transparent group-hover:ring-indigo-500 transition-all">
+                    <div className="w-8 h-8 rounded-full bg-[#456] flex items-center justify-center text-white font-semibold ring-2 ring-transparent group-hover:ring-[#00c030] transition-all">
                       {profile?.name?.[0]?.toUpperCase() || "U"}
                     </div>
                   )}
                 </Link>
+                
                 <button
                   onClick={handleSignOut}
-                  className="text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 transition-colors font-medium"
+                  className="text-[#9ab] hover:text-white transition-colors text-sm font-semibold"
                 >
                   Sign Out
                 </button>
@@ -130,7 +183,7 @@ export default function Navigation() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400"
+                className="md:hidden p-2 text-[#9ab] hover:text-white"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {menuOpen ? (
@@ -151,7 +204,7 @@ export default function Navigation() {
                   },
                 });
               }}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition-all transform hover:scale-105 shadow-md"
+              className="bg-[#00c030] hover:bg-[#00e054] text-[#14181c] font-bold py-2 px-6 rounded transition-all"
             >
               Sign In
             </button>
@@ -160,40 +213,83 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {menuOpen && user && (
-          <div className="md:hidden py-4 border-t border-gray-200 dark:border-gray-800">
+          <div className="md:hidden py-4 border-t border-[#456]">
             <div className="flex flex-col space-y-4">
+              {/* Mobile Search */}
+              <form onSubmit={handleSearch}>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-2 pl-10 focus:outline-none focus:border-[#00c030]"
+                  />
+                  <svg
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#678]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </form>
+
               <Link
                 href="/"
                 onClick={() => setMenuOpen(false)}
-                className={`font-medium transition-colors ${
+                className={`font-semibold transition-colors ${
                   isActive("/")
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-600 dark:text-gray-300"
+                    ? "text-white"
+                    : "text-[#9ab]"
                 }`}
               >
-                Feed
+                Music
               </Link>
               <Link
-                href="/discover"
+                href="/search"
                 onClick={() => setMenuOpen(false)}
-                className={`font-medium transition-colors ${
-                  isActive("/discover")
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-600 dark:text-gray-300"
+                className={`font-semibold transition-colors ${
+                  isActive("/search")
+                    ? "text-white"
+                    : "text-[#9ab]"
                 }`}
               >
-                Discover
+                Search
               </Link>
               <Link
-                href="/share"
+                href="/lists"
                 onClick={() => setMenuOpen(false)}
-                className={`font-medium transition-colors ${
-                  isActive("/share")
-                    ? "text-indigo-600 dark:text-indigo-400"
-                    : "text-gray-600 dark:text-gray-300"
+                className={`font-semibold transition-colors ${
+                  isActive("/lists")
+                    ? "text-white"
+                    : "text-[#9ab]"
                 }`}
               >
-                Share
+                Lists
+              </Link>
+              <Link
+                href="/members"
+                onClick={() => setMenuOpen(false)}
+                className={`font-semibold transition-colors ${
+                  isActive("/members")
+                    ? "text-white"
+                    : "text-[#9ab]"
+                }`}
+              >
+                Members
+              </Link>
+              <Link
+                href="/journal"
+                onClick={() => setMenuOpen(false)}
+                className={`font-semibold transition-colors ${
+                  isActive("/journal")
+                    ? "text-white"
+                    : "text-[#9ab]"
+                }`}
+              >
+                Journal
               </Link>
               <Link
                 href={`/profile/${user.id}`}
@@ -209,15 +305,15 @@ export default function Navigation() {
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                  <div className="w-8 h-8 rounded-full bg-[#456] flex items-center justify-center text-white font-semibold">
                     {profile?.name?.[0]?.toUpperCase() || "U"}
                   </div>
                 )}
-                <span className="font-medium text-gray-900 dark:text-white">Profile</span>
+                <span className="font-semibold text-white">Profile</span>
               </Link>
               <button
                 onClick={handleSignOut}
-                className="text-left text-red-500 dark:text-red-400 font-medium"
+                className="text-left text-[#00c030] font-semibold"
               >
                 Sign Out
               </button>

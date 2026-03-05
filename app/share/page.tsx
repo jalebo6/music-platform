@@ -62,7 +62,7 @@ export default function SharePage() {
     return (
       <div className="flex flex-col justify-center items-center min-h-[70vh] space-y-4">
         <div className="spinner h-12 w-12"></div>
-        <p className="text-gray-500 dark:text-gray-400 font-medium">Loading...</p>
+        <p className="text-[#9ab] font-medium">Loading...</p>
       </div>
     );
   }
@@ -75,23 +75,23 @@ export default function SharePage() {
     <div className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="text-center mb-10">
-        <div className="inline-block mb-4 p-3 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg">
+        <div className="inline-block mb-4 p-3 rounded-xl bg-[#2a3441]">
           <span className="text-4xl">🎵</span>
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-3">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
           Share Your Music
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
+        <p className="text-lg text-[#9ab] max-w-xl mx-auto">
           Tell the world about a song or album you love. Share your thoughts and feelings.
         </p>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="card p-8 md:p-10 space-y-6">
+      <form onSubmit={handleSubmit} className="bg-[#1e2936] rounded-lg p-8 md:p-10 space-y-6">
         {/* Song/Album Title */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Song/Album Title <span className="text-red-500">*</span>
+          <label className="block text-sm font-bold text-white mb-2">
+            Song/Album Title <span className="text-[#00c030]">*</span>
           </label>
           <input
             type="text"
@@ -99,14 +99,14 @@ export default function SharePage() {
             onChange={(e) => setTitle(e.target.value)}
             required
             placeholder="e.g., Bohemian Rhapsody"
-            className="input-primary"
+            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
           />
         </div>
 
         {/* Artist */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Artist <span className="text-red-500">*</span>
+          <label className="block text-sm font-bold text-white mb-2">
+            Artist <span className="text-[#00c030]">*</span>
           </label>
           <input
             type="text"
@@ -114,28 +114,28 @@ export default function SharePage() {
             onChange={(e) => setArtist(e.target.value)}
             required
             placeholder="e.g., Queen"
-            className="input-primary"
+            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
           />
         </div>
 
         {/* Album (Optional) */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Album <span className="text-gray-400 text-xs">(optional)</span>
+          <label className="block text-sm font-bold text-white mb-2">
+            Album <span className="text-[#678] text-xs font-normal">(optional)</span>
           </label>
           <input
             type="text"
             value={album}
             onChange={(e) => setAlbum(e.target.value)}
             placeholder="e.g., A Night at the Opera"
-            className="input-primary"
+            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
           />
         </div>
 
         {/* Your Thoughts */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Your Thoughts <span className="text-red-500">*</span>
+          <label className="block text-sm font-bold text-white mb-2">
+            Your Thoughts <span className="text-[#00c030]">*</span>
           </label>
           <textarea
             value={thought}
@@ -143,27 +143,27 @@ export default function SharePage() {
             required
             rows={6}
             placeholder="What do you love about this music? How does it make you feel? Share your thoughts..."
-            className="input-primary resize-none"
+            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 resize-none focus:outline-none focus:border-[#00c030]"
             style={{ minHeight: '120px' }}
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-[#678] mt-2">
             Minimum 10 characters. Be thoughtful and genuine.
           </p>
         </div>
 
         {/* Tags */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            Tags <span className="text-gray-400 text-xs">(optional)</span>
+          <label className="block text-sm font-bold text-white mb-2">
+            Tags <span className="text-[#678] text-xs font-normal">(optional)</span>
           </label>
           <input
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
             placeholder="e.g., rock, classic, epic, 70s"
-            className="input-primary"
+            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs text-[#678] mt-2">
             Separate tags with commas. Help others discover your share!
           </p>
         </div>
@@ -173,11 +173,11 @@ export default function SharePage() {
           <button
             type="submit"
             disabled={loading || !title || !artist || !thought}
-            className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span className="flex items-center justify-center space-x-2">
-                <div className="spinner h-5 w-5 border-white"></div>
+                <div className="spinner h-5 w-5"></div>
                 <span>Sharing...</span>
               </span>
             ) : (
@@ -193,7 +193,7 @@ export default function SharePage() {
             type="button"
             onClick={() => router.push("/")}
             disabled={loading}
-            className="btn-secondary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
@@ -201,14 +201,14 @@ export default function SharePage() {
       </form>
 
       {/* Tips Section */}
-      <div className="mt-8 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800">
-        <h3 className="font-semibold text-indigo-900 dark:text-indigo-300 mb-3 flex items-center space-x-2">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mt-8 p-6 bg-[#1e2936] rounded-lg border border-[#456]">
+        <h3 className="font-bold text-white mb-3 flex items-center space-x-2">
+          <svg className="w-5 h-5 text-[#00c030]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
           </svg>
           <span>Tips for great shares</span>
         </h3>
-        <ul className="text-sm text-indigo-800 dark:text-indigo-200 space-y-2">
+        <ul className="text-sm text-[#9ab] space-y-2">
           <li className="flex items-start space-x-2">
             <span>•</span>
             <span>Be specific about what you love – emotions, lyrics, production</span>

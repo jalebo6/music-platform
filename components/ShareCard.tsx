@@ -56,7 +56,6 @@ export default function ShareCard({ share }: ShareCardProps) {
 
     setComments(data || []);
     
-    // Check which comments user has upvoted
     if (user) {
       const commentIds = data?.map(c => c.id) || [];
       const { data: userUpvotes } = await supabase
@@ -132,16 +131,11 @@ export default function ShareCard({ share }: ShareCardProps) {
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
 
-  const tagColors = [
-    "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300",
-    "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300",
-    "bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300",
-    "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300",
-    "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300",
-  ];
+  // Generate a placeholder album cover with first letter
+  const albumInitial = share.title[0]?.toUpperCase() || "?";
 
   return (
-    <div className="card p-6 transition-all duration-200 hover:scale-[1.01]">
+    <div className="bg-[#1e2936] rounded-lg p-5 hover:bg-[#2a3441] transition-all">
       <div className="flex items-start space-x-4">
         {/* User Avatar */}
         <Link href={`/profile/${share.user_id}`} className="flex-shrink-0">
@@ -149,55 +143,67 @@ export default function ShareCard({ share }: ShareCardProps) {
             <Image
               src={share.users.avatar_url}
               alt={share.users.name}
-              width={48}
-              height={48}
-              className="rounded-full ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-indigo-500 transition-all"
+              width={40}
+              height={40}
+              className="rounded-full"
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg">
+            <div className="w-10 h-10 rounded-full bg-[#456] flex items-center justify-center text-white font-bold">
               {share.users.name[0].toUpperCase()}
             </div>
           )}
         </Link>
 
         <div className="flex-1 min-w-0">
-          {/* Header */}
+          {/* Header: User + Time */}
           <div className="flex items-center space-x-2 mb-3">
             <Link
               href={`/profile/${share.user_id}`}
-              className="font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              className="font-bold text-white hover:text-[#00c030] transition-colors"
             >
               {share.users.name}
             </Link>
-            <span className="text-gray-400 dark:text-gray-500">•</span>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="text-[#678]">•</span>
+            <span className="text-sm text-[#678]">
               {timeAgo(share.created_at)}
             </span>
           </div>
 
-          {/* Music Info */}
-          <div className="mb-4">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 leading-tight">
-              {share.title}
-            </h3>
-            <p className="text-base text-gray-600 dark:text-gray-400 font-medium">
-              {share.artist}
-              {share.album && <span className="text-gray-400 dark:text-gray-500"> • {share.album}</span>}
-            </p>
+          {/* Album Cover + Info Side by Side */}
+          <div className="flex items-start space-x-4 mb-4">
+            {/* Album Cover (Placeholder) */}
+            <div className="flex-shrink-0 w-20 h-20 bg-[#2a3441] rounded flex items-center justify-center border border-[#456]">
+              <span className="text-3xl font-bold text-[#678]">{albumInitial}</span>
+            </div>
+
+            {/* Music Info */}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-bold text-white mb-1 leading-tight">
+                {share.title}
+              </h3>
+              <p className="text-sm text-[#9ab] font-medium">
+                {share.artist}
+              </p>
+              {share.album && (
+                <p className="text-xs text-[#678]">
+                  {share.album}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Thought */}
-          <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+          {/* Thought/Review */}
+          <p className="text-[#ccc] mb-3 leading-relaxed">
             {share.thought}
           </p>
 
           {/* Tags */}
           {share.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-3">
               {share.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className={`tag ${tagColors[index % tagColors.length]}`}
+                  className="text-xs font-semibold px-3 py-1 rounded bg-[#456] text-[#9ab]"
                 >
                   {tag}
                 </span>
@@ -208,34 +214,34 @@ export default function ShareCard({ share }: ShareCardProps) {
           {/* Comments Toggle */}
           <button
             onClick={() => setShowComments(!showComments)}
-            className="inline-flex items-center space-x-2 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+            className="inline-flex items-center space-x-2 text-sm font-semibold text-[#9ab] hover:text-white transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <span>
-              {showComments ? "Hide" : "Show"} {comments.length} {comments.length === 1 ? "comment" : "comments"}
+              {comments.length} {comments.length === 1 ? "comment" : "comments"}
             </span>
           </button>
 
           {/* Comments Section */}
           {showComments && (
-            <div className="mt-6 space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-4 space-y-3 pt-4 border-t border-[#456]">
               {/* New Comment Input */}
               {user && (
-                <div className="flex space-x-3">
+                <div className="flex space-x-2">
                   <input
                     type="text"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     onKeyPress={(e) => e.key === "Enter" && handleComment()}
                     placeholder="Add a comment..."
-                    className="input-primary text-sm"
+                    className="flex-1 bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-3 py-2 text-sm focus:outline-none focus:border-[#00c030]"
                   />
                   <button
                     onClick={handleComment}
                     disabled={!newComment.trim()}
-                    className="bg-indigo-500 hover:bg-indigo-600 disabled:bg-gray-400 text-white px-5 py-2 rounded-lg transition-colors font-medium text-sm whitespace-nowrap"
+                    className="bg-[#00c030] hover:bg-[#00e054] disabled:bg-[#456] disabled:text-[#678] text-[#14181c] font-bold px-4 py-2 rounded transition-colors text-sm whitespace-nowrap"
                   >
                     Post
                   </button>
@@ -244,59 +250,59 @@ export default function ShareCard({ share }: ShareCardProps) {
 
               {/* Comments List */}
               {comments.length === 0 ? (
-                <p className="text-center text-gray-500 dark:text-gray-400 py-4 text-sm">
+                <p className="text-center text-[#678] py-3 text-sm">
                   No comments yet. Be the first!
                 </p>
               ) : (
                 comments.map((comment) => (
-                  <div key={comment.id} className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
+                  <div key={comment.id} className="bg-[#14181c] p-3 rounded">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3 flex-1 min-w-0">
+                      <div className="flex items-start space-x-2 flex-1 min-w-0">
                         {comment.users.avatar_url ? (
                           <Image
                             src={comment.users.avatar_url}
                             alt={comment.users.name}
-                            width={32}
-                            height={32}
+                            width={28}
+                            height={28}
                             className="rounded-full flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                          <div className="w-7 h-7 rounded-full bg-[#456] flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                             {comment.users.name[0].toUpperCase()}
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-semibold text-gray-900 dark:text-white text-sm">
+                            <span className="font-bold text-white text-sm">
                               {comment.users.name}
                             </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                            <span className="text-xs text-[#678]">
                               {timeAgo(comment.created_at)}
                             </span>
                           </div>
-                          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed break-words">
+                          <p className="text-[#ccc] text-sm leading-relaxed break-words">
                             {comment.text}
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3 ml-3 flex-shrink-0">
+                      <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
                         <button
                           onClick={() => handleUpvote(comment.id)}
                           className={`flex items-center space-x-1 transition-colors ${
                             upvotes[comment.id]
-                              ? "text-indigo-600 dark:text-indigo-400"
-                              : "text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400"
+                              ? "text-[#00c030]"
+                              : "text-[#678] hover:text-white"
                           }`}
                         >
-                          <svg className="w-5 h-5" fill={upvotes[comment.id] ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-4 h-4" fill={upvotes[comment.id] ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                           </svg>
-                          <span className="text-sm font-medium">{comment.upvotes}</span>
+                          <span className="text-xs font-bold">{comment.upvotes}</span>
                         </button>
                         {user && user.id === comment.user_id && (
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-xs font-medium transition-colors"
+                            className="text-[#678] hover:text-white text-xs font-semibold transition-colors"
                           >
                             Delete
                           </button>
