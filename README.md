@@ -1,54 +1,161 @@
-# Music Platform
+# Music Platform MVP
 
-**A community-driven music discovery platform** — Letterboxd for music. 
+A Letterboxd-style platform for music. Share songs and albums with your thoughts, discover new music, and connect with other music lovers.
 
-We're building the first successful social app where people share, discuss, and discover music with friends. It's not about the tech. It's about being smarter at business execution than everyone else.
+## 🚀 Quick Start
 
-## Core Thesis
+### Prerequisites
+- Node.js 18+ installed
+- Supabase account
+- Vercel account (for deployment)
 
-- **This is a business problem, not a tech problem**
-- We compete on data science, behavioral psychology, and smart business decisions
-- We're not competing with Spotify/Apple (too big, no incentive)
-- We're competing with the small startups who tried and failed (they just weren't good at business)
-- Our network (labels, managers, artists, capital) is the unfair advantage
-- Network effects + partnerships + data-driven growth = winner
+### 1. Database Setup
 
-## Quick Links
+1. Go to your Supabase project: https://supabase.com/dashboard/project/fhdthidolwyetbghopbp
+2. Navigate to the SQL Editor
+3. Run the `supabase_schema.sql` file to create all tables and policies
+4. After creating test users (see step 3), run `supabase_seed.sql` to populate seed data
 
-- **[VISION.md](./VISION.md)** — Full product vision, thesis, and why we win
-- **[ROADMAP.md](./ROADMAP.md)** — Phased execution plan from MVP to 1M DAU
-- **[COMPETITIVE_ANALYSIS.md](./COMPETITIVE_ANALYSIS.md)** — Competitors, moats, positioning
-- **[PRODUCT_SPEC.md](./PRODUCT_SPEC.md)** — (In progress) Detailed feature breakdown
-- **[GROWTH_STRATEGY.md](./GROWTH_STRATEGY.md)** — (In progress) Data-driven growth playbook
+### 2. Environment Variables
 
-## Status
+Create a `.env.local` file in the root directory:
 
-**Phase:** Deep Design (Product Vision → MVP Spec)
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://fhdthidolwyetbghopbp.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
 
-**Timeline:** Serious execution when Jacob has 5-10 hrs/week available
+To get your Supabase keys:
+1. Go to Project Settings > API in your Supabase dashboard
+2. Copy the `URL` and `anon` key
 
-## Team
+### 3. Configure Google OAuth
 
-- Jacob Lebowitz (Co-founder)
-- [Co-founder TBD]
+1. In Supabase dashboard, go to Authentication > Providers
+2. Enable Google provider
+3. Add authorized redirect URIs:
+   - `http://localhost:3000` (for development)
+   - Your Vercel deployment URL (for production)
 
-## Network Assets
+### 4. Install Dependencies
 
-- Record labels + producers (sourced through Jacob's connections)
-- Talent managers (UTA, others)
-- Million+ house music producer
-- Music data scientists
-- Media + marketing operators
+```bash
+npm install
+```
 
-## Ethos
+### 5. Run Development Server
 
-- **Community-first, not extraction-first** — Build for humans, not bots
-- **Data-driven** — Every decision measured, iterated, optimized
-- **Thoughtful product design** — Deep thinking before code
-- **No AI suggestions influencing early vision** — We own the creativity first
-- **Wholesome community** — Ban trolls, toxicity, and bot garbage
-- **Monetization built in** — Not ads, but partnerships and experiences
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📦 Features
+
+### Core MVP Features (Implemented)
+1. ✅ **Authentication** - Google sign-in via Supabase
+2. ✅ **User Profiles** - Name, avatar, bio, edit capabilities
+3. ✅ **Share Song/Album** - Title, artist, album, written thoughts, tags
+4. ✅ **Feed** - Chronological feed of all shares with real-time updates
+5. ✅ **Comments** - Threaded comments with upvoting, delete own comments
+6. ✅ **Follow System** - Follow users and genres
+7. ✅ **Discover Page** - Trending by genre, search songs/artists/users
+
+### Seed Data Included
+- 8 album shares (Dark Side of the Moon, Alive 2007, Homework, etc.)
+- 10 song shares (Creep, Iris, Banana Pancakes, etc.)
+
+## 🚢 Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub:
+```bash
+git add .
+git commit -m "Initial MVP build"
+git push origin app/mvp-build
+```
+
+2. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+3. Import your GitHub repository
+4. Configure environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+5. Deploy!
+
+Vercel will auto-deploy on every push to the branch.
+
+### Update Supabase Auth Redirect
+
+After deployment, add your Vercel URL to Supabase:
+1. Go to Authentication > URL Configuration
+2. Add your Vercel URL to Site URL and Redirect URLs
+
+## 🧪 Testing
+
+### Beta Testers
+Invite these users to test:
+- Jacob Lebowitz: jalebo6@gmail.com
+- Harrison Lieber: harrisonlieber@yahoo.com
+
+### Test Flow
+1. Sign in with Google
+2. Edit profile (add bio)
+3. Share a song with thoughts
+4. Browse feed
+5. Comment on shares
+6. Upvote comments
+7. Follow other users
+8. Use Discover page to search and filter
+9. Test on mobile (responsive design)
+
+## 📊 Database Schema
+
+### Tables
+- `users` - User profiles (synced with Supabase auth)
+- `shares` - Songs/albums shared by users
+- `comments` - Comments on shares
+- `follows` - User following users or genres
+- `upvotes` - Upvotes on comments (one per user per comment)
+
+### Key Features
+- Row Level Security (RLS) enabled on all tables
+- Automatic user profile creation on signup
+- Automatic upvote count updates via triggers
+- Real-time subscriptions support
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Auth, Realtime)
+- **Hosting**: Vercel (frontend), Supabase (backend)
+- **Auth**: Google OAuth via Supabase
+
+## 📝 TODO / Phase 2 Improvements
+
+- Spotify/Apple Music API integration for album artwork
+- Notifications for comments/follows
+- Direct messaging between users
+- User taste profiles with favorite genres/artists
+- Playlists/collections feature
+- Activity feed with follow-based filtering
+- Email notifications for new followers/comments
+
+## 🔒 Security
+
+- Environment variables for all secrets
+- Row Level Security (RLS) policies on all database tables
+- Authenticated routes protected
+- Users can only delete their own comments/shares
+- CORS configured for Supabase
+
+## 📄 License
+
+Private - All Rights Reserved
 
 ---
 
-**Status:** Planting seeds. Building conviction. Ready to execute fast when the time is right.
+**Built with ❤️ by Jacob Lebowitz**
+
+For issues or questions, contact: jalebo6@gmail.com
