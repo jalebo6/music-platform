@@ -2,24 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import ShareCard from "@/components/ShareCard";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import AlbumCover from "@/components/AlbumCover";
 
-interface Share {
+interface Album {
   id: string;
-  user_id: string;
   title: string;
   artist: string;
-  album: string | null;
-  thought: string;
-  tags: string[];
-  created_at: string;
-  users: {
-    name: string;
-    avatar_url: string;
-  };
+  cover_url: string;
+  genre: string;
 }
 
 export default function Home() {
@@ -293,10 +286,22 @@ export default function Home() {
           <h2 className="text-lg font-bold text-white mb-4">Quick Links</h2>
           <div className="space-y-2 text-sm">
             <Link
+              href="/albums"
+              className="block text-[#9ab] hover:text-white transition-colors font-medium"
+            >
+              → Browse Albums
+            </Link>
+            <Link
+              href="/artists"
+              className="block text-[#9ab] hover:text-white transition-colors font-medium"
+            >
+              → Browse Artists
+            </Link>
+            <Link
               href="/discover"
               className="block text-[#9ab] hover:text-white transition-colors font-medium"
             >
-              → Explore All Music
+              → Discover Music
             </Link>
             <Link
               href="/share"

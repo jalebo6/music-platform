@@ -109,47 +109,47 @@ export default function Navigation() {
                       : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Music
+                  Feed
                 </Link>
                 <Link
-                  href="/search"
+                  href="/albums"
                   className={`text-sm font-semibold transition-colors ${
-                    isActive("/search")
+                    pathname?.startsWith("/albums")
                       ? "text-white"
                       : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Search
+                  Albums
                 </Link>
                 <Link
-                  href="/lists"
+                  href="/artists"
                   className={`text-sm font-semibold transition-colors ${
-                    isActive("/lists")
+                    pathname?.startsWith("/artists")
                       ? "text-white"
                       : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Lists
+                  Artists
                 </Link>
                 <Link
-                  href="/members"
+                  href="/discover"
                   className={`text-sm font-semibold transition-colors ${
-                    isActive("/members")
+                    isActive("/discover")
                       ? "text-white"
                       : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Members
+                  Discover
                 </Link>
                 <Link
-                  href="/journal"
+                  href="/share"
                   className={`text-sm font-semibold transition-colors ${
-                    isActive("/journal")
+                    isActive("/share")
                       ? "text-white"
                       : "text-[#9ab] hover:text-white"
                   }`}
                 >
-                  Journal
+                  Share
                 </Link>
                 
                 {/* Profile Avatar */}
@@ -245,51 +245,51 @@ export default function Navigation() {
                     : "text-[#9ab]"
                 }`}
               >
-                Music
+                Feed
               </Link>
               <Link
-                href="/search"
+                href="/albums"
                 onClick={() => setMenuOpen(false)}
                 className={`font-semibold transition-colors ${
-                  isActive("/search")
+                  pathname?.startsWith("/albums")
                     ? "text-white"
                     : "text-[#9ab]"
                 }`}
               >
-                Search
+                Albums
               </Link>
               <Link
-                href="/lists"
+                href="/artists"
                 onClick={() => setMenuOpen(false)}
                 className={`font-semibold transition-colors ${
-                  isActive("/lists")
+                  pathname?.startsWith("/artists")
                     ? "text-white"
                     : "text-[#9ab]"
                 }`}
               >
-                Lists
+                Artists
               </Link>
               <Link
-                href="/members"
+                href="/discover"
                 onClick={() => setMenuOpen(false)}
                 className={`font-semibold transition-colors ${
-                  isActive("/members")
+                  isActive("/discover")
                     ? "text-white"
                     : "text-[#9ab]"
                 }`}
               >
-                Members
+                Discover
               </Link>
               <Link
-                href="/journal"
+                href="/share"
                 onClick={() => setMenuOpen(false)}
                 className={`font-semibold transition-colors ${
-                  isActive("/journal")
+                  isActive("/share")
                     ? "text-white"
                     : "text-[#9ab]"
                 }`}
               >
-                Journal
+                Share
               </Link>
               <Link
                 href={`/profile/${user.id}`}
