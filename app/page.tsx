@@ -16,18 +16,18 @@ interface Album {
 }
 
 export default function Home() {
-  const [shares, setShares] = useState<Share[]>([]);
+  const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [trendingUsers, setTrendingUsers] = useState<any[]>([]);
-  const [popularTags, setPopularTags] = useState<string[]>([]);
+  const [popularGenres, setPopularGenres] = useState<string[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     checkUser();
-    fetchFeed();
+    fetchAlbums();
     fetchTrendingUsers();
-    fetchPopularTags();
+    fetchPopularGenres();
   }, []);
 
   async function checkUser() {
@@ -35,24 +35,18 @@ export default function Home() {
     setUser(session?.user || null);
   }
 
-  async function fetchFeed() {
+  async function fetchAlbums() {
     try {
       const { data, error } = await supabase
-        .from("shares")
-        .select(`
-          *,
-          users (
-            name,
-            avatar_url
-          )
-        `)
+        .from("albums")
+        .select("*")
         .order("created_at", { ascending: false })
-        .limit(20);
+        .limit(24);
 
       if (error) throw error;
-      setShares(data || []);
+      setAlbums(data || []);
     } catch (error) {
-      console.error("Error fetching feed:", error);
+      console.error("Error fetching albums:", error);
     } finally {
       setLoading(false);
     }
@@ -66,27 +60,26 @@ export default function Home() {
     setTrendingUsers(data || []);
   }
 
-  async function fetchPopularTags() {
-    // Get all shares and extract popular tags
+  async function fetchPopularGenres() {
     const { data } = await supabase
-      .from("shares")
-      .select("tags")
-      .limit(50);
+      .from("albums")
+      .select("genre")
+      .limit(100);
     
     if (data) {
-      const tagCounts: { [key: string]: number } = {};
-      data.forEach((share) => {
-        share.tags?.forEach((tag: string) => {
-          tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-        });
+      const genreCounts: { [key: string]: number } = {};
+      data.forEach((album) => {
+        if (album.genre) {
+          genreCounts[album.genre] = (genreCounts[album.genre] || 0) + 1;
+        }
       });
       
-      const sorted = Object.entries(tagCounts)
+      const sorted = Object.entries(genreCounts)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 8)
-        .map(([tag]) => tag);
+        .map(([genre]) => genre);
       
-      setPopularTags(sorted);
+      setPopularGenres(sorted);
     }
   }
 
@@ -94,7 +87,7 @@ export default function Home() {
     return (
       <div className="flex flex-col justify-center items-center min-h-[70vh] space-y-4">
         <div className="spinner h-12 w-12"></div>
-        <p className="text-[#9ab] font-medium">Loading your feed...</p>
+        <p className="text-[#9ab] font-medium">Loading...</p>
       </div>
     );
   }
@@ -116,7 +109,7 @@ export default function Home() {
               Like Letterboxd, but for music
             </p>
             <p className="text-lg md:text-xl text-[#678] max-w-2xl mx-auto leading-relaxed">
-              Share songs you love, discover new sounds, and connect with music lovers worldwide
+              Rate albums, write reviews, and discover new music with a passionate community
             </p>
           </div>
           
@@ -126,7 +119,7 @@ export default function Home() {
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: `${window.location.origin}/auth/callback`,
+                  redirectTo: `${window.location.origin}/api/auth/callback`,
                 },
               });
             }}
@@ -144,24 +137,24 @@ export default function Home() {
           {/* Feature Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-[#1e2936] p-8 rounded-lg text-center hover:bg-[#2a3441] transition-all">
-              <div className="text-5xl mb-4">🎵</div>
-              <h3 className="text-xl font-bold text-white mb-2">Share Music</h3>
+              <div className="text-5xl mb-4">⭐</div>
+              <h3 className="text-xl font-bold text-white mb-2">Rate Albums</h3>
               <p className="text-[#9ab] leading-relaxed">
-                Post songs and albums you love with your thoughts
+                Rate albums from 0.5 to 5 stars and write reviews
               </p>
             </div>
             <div className="bg-[#1e2936] p-8 rounded-lg text-center hover:bg-[#2a3441] transition-all">
               <div className="text-5xl mb-4">💬</div>
-              <h3 className="text-xl font-bold text-white mb-2">Discuss</h3>
+              <h3 className="text-xl font-bold text-white mb-2">Discover</h3>
               <p className="text-[#9ab] leading-relaxed">
-                Comment and upvote on others' music shares
+                Search albums, artists, songs, and curated lists
               </p>
             </div>
             <div className="bg-[#1e2936] p-8 rounded-lg text-center hover:bg-[#2a3441] transition-all">
-              <div className="text-5xl mb-4">🔍</div>
-              <h3 className="text-xl font-bold text-white mb-2">Discover</h3>
+              <div className="text-5xl mb-4">📋</div>
+              <h3 className="text-xl font-bold text-white mb-2">Create Lists</h3>
               <p className="text-[#9ab] leading-relaxed">
-                Find new music through your community
+                Curate and share your favorite albums with the community
               </p>
             </div>
           </div>
@@ -178,42 +171,52 @@ export default function Home() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-1">Your Feed</h1>
-            <p className="text-[#9ab]">Recent activity from the community</p>
+            <h1 className="text-3xl font-bold text-white mb-1">Popular Albums</h1>
+            <p className="text-[#9ab]">Discover and rate music</p>
           </div>
-          <button
-            onClick={() => router.push("/share")}
+          <Link
+            href="/search"
             className="bg-[#00c030] hover:bg-[#00e054] text-[#14181c] font-bold px-5 py-3 rounded flex items-center space-x-2 transition-all whitespace-nowrap"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <span className="hidden sm:inline">Share</span>
-          </button>
+            <span className="hidden sm:inline">Search</span>
+          </Link>
         </div>
 
         {/* Empty State */}
-        {shares.length === 0 ? (
+        {albums.length === 0 ? (
           <div className="bg-[#1e2936] p-12 rounded-lg text-center">
             <div className="text-6xl mb-4">🎵</div>
             <h3 className="text-2xl font-bold text-white mb-3">
-              No shares yet
+              No albums yet
             </h3>
             <p className="text-[#9ab] mb-6 max-w-md mx-auto">
-              Be the first to share music with the community!
+              Check back soon for albums to rate and review!
             </p>
-            <button
-              onClick={() => router.push("/share")}
-              className="btn-primary"
-            >
-              Share Your First Song
-            </button>
           </div>
         ) : (
-          /* Feed Items */
-          shares.map((share) => (
-            <ShareCard key={share.id} share={share} />
-          ))
+          /* Albums Grid */
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {albums.map((album) => (
+              <div key={album.id}>
+                <AlbumCover
+                  albumId={album.id}
+                  albumTitle={album.title}
+                  albumArtist={album.artist}
+                  coverUrl={album.cover_url}
+                  userId={user?.id}
+                  showHoverActions={!!user}
+                  size="md"
+                />
+                <div className="mt-2">
+                  <h3 className="font-bold text-white text-sm truncate">{album.title}</h3>
+                  <p className="text-xs text-[#9ab] truncate">{album.artist}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -256,25 +259,25 @@ export default function Home() {
             ))}
           </div>
           <Link
-            href="/discover"
+            href="/members"
             className="block mt-4 text-center text-sm font-semibold text-[#00c030] hover:text-[#00e054] transition-colors"
           >
             Discover more →
           </Link>
         </div>
 
-        {/* Popular Tags */}
-        {popularTags.length > 0 && (
+        {/* Popular Genres */}
+        {popularGenres.length > 0 && (
           <div className="bg-[#1e2936] rounded-lg p-5">
             <h2 className="text-lg font-bold text-white mb-4">Popular Genres</h2>
             <div className="flex flex-wrap gap-2">
-              {popularTags.map((tag) => (
+              {popularGenres.map((genre) => (
                 <Link
-                  key={tag}
-                  href={`/discover?tag=${tag}`}
+                  key={genre}
+                  href={`/search?q=${genre}`}
                   className="text-xs font-semibold px-3 py-2 rounded bg-[#456] text-[#9ab] hover:bg-[#678] hover:text-white transition-colors"
                 >
-                  {tag}
+                  {genre}
                 </Link>
               ))}
             </div>
@@ -286,28 +289,22 @@ export default function Home() {
           <h2 className="text-lg font-bold text-white mb-4">Quick Links</h2>
           <div className="space-y-2 text-sm">
             <Link
-              href="/albums"
+              href="/search"
               className="block text-[#9ab] hover:text-white transition-colors font-medium"
             >
-              → Browse Albums
+              → Search Music
             </Link>
             <Link
-              href="/artists"
+              href="/lists"
               className="block text-[#9ab] hover:text-white transition-colors font-medium"
             >
-              → Browse Artists
+              → Browse Lists
             </Link>
             <Link
-              href="/discover"
+              href="/journal"
               className="block text-[#9ab] hover:text-white transition-colors font-medium"
             >
-              → Discover Music
-            </Link>
-            <Link
-              href="/share"
-              className="block text-[#9ab] hover:text-white transition-colors font-medium"
-            >
-              → Share a Song
+              → Recent Activity
             </Link>
             <Link
               href={`/profile/${user.id}`}
