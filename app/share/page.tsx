@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import AlbumSearch from "@/components/AlbumSearch";
+// import AlbumSearch from "@/components/AlbumSearch";
 
 interface SelectedAlbum {
   id: string;
@@ -160,14 +160,17 @@ export default function SharePage() {
         {useSpotify && !selectedAlbum && (
           <div>
             <label className="block text-sm font-bold text-white mb-2">
-              Search Album <span className="text-[#00c030]">*</span>
+              Album Name <span className="text-[#00c030]">*</span>
             </label>
-            <AlbumSearch
-              onSelect={handleAlbumSelect}
-              placeholder="Search for an album on Spotify..."
+            <input
+              type="text"
+              value={album}
+              onChange={(e) => setAlbum(e.target.value)}
+              placeholder="Album title"
+              className="w-full bg-[#1a1f27] border border-[#2a3441] rounded-lg px-4 py-2 text-white placeholder-[#678]"
             />
             <p className="text-xs text-[#678] mt-2">
-              Search for an album to auto-fill details with real data
+              Enter the album title
             </p>
           </div>
         )}
