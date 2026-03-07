@@ -3,6 +3,15 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import AlbumSearch from "@/components/AlbumSearch";
+
+interface SelectedAlbum {
+  id: string;
+  name: string;
+  artists: string[];
+  image: string;
+  release_date: string;
+}
 
 export default function SharePage() {
   const [user, setUser] = useState<any>(null);
@@ -13,6 +22,8 @@ export default function SharePage() {
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
+  const [selectedAlbum, setSelectedAlbum] = useState<SelectedAlbum | null>(null);
+  const [useSpotify, setUseSpotify] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,9 +40,37 @@ export default function SharePage() {
     setAuthLoading(false);
   }
 
+  const handleAlbumSelect = (album: SelectedAlbum) => {
+    setSelectedAlbum(album);
+    setTitle(album.name);
+    setArtist(album.artists.join(", "));
+    setAlbum(album.name);
+  };
+
+  const clearAlbumSelection = () => {
+    setSelectedAlbum(null);
+    setTitle("");
+    setArtist("");
+    setAlbum("");
+  };
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!user || !title || !artist || !thought) return;
+    
+    // Validation
+    if (!user) return;
+    if (useSpotify && !selectedAlbum) {
+      alert("Please search and select an album from Spotify");
+      return;
+    }
+    if (!useSpotify && (!title || !artist)) {
+      alert("Please fill in the song/album title and artist");
+      return;
+    }
+    if (!thought || thought.length < 10) {
+      alert("Please write at least 10 characters about your thoughts");
+      return;
+    }
 
     setLoading(true);
 
@@ -88,49 +127,128 @@ export default function SharePage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="bg-[#1e2936] rounded-lg p-8 md:p-10 space-y-6">
-        {/* Song/Album Title */}
-        <div>
-          <label className="block text-sm font-bold text-white mb-2">
-            Song/Album Title <span className="text-[#00c030]">*</span>
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            placeholder="e.g., Bohemian Rhapsody"
-            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
-          />
+        {/* Spotify Toggle */}
+        <div className="flex items-center justify-between p-4 bg-[#2a3441] rounded-lg">
+          <div className="flex items-center space-x-3">
+            <svg className="w-6 h-6 text-[#1DB954]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            <div>
+              <div className="font-semibold text-white">Search Spotify</div>
+              <div className="text-xs text-[#678]">Get real album data, artwork & tracklists</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setUseSpotify(!useSpotify);
+              if (!useSpotify) clearAlbumSelection();
+            }}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              useSpotify ? 'bg-[#1DB954]' : 'bg-[#456]'
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                useSpotify ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
         </div>
 
-        {/* Artist */}
-        <div>
-          <label className="block text-sm font-bold text-white mb-2">
-            Artist <span className="text-[#00c030]">*</span>
-          </label>
-          <input
-            type="text"
-            value={artist}
-            onChange={(e) => setArtist(e.target.value)}
-            required
-            placeholder="e.g., Queen"
-            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
-          />
-        </div>
+        {/* Spotify Album Search */}
+        {useSpotify && !selectedAlbum && (
+          <div>
+            <label className="block text-sm font-bold text-white mb-2">
+              Search Album <span className="text-[#00c030]">*</span>
+            </label>
+            <AlbumSearch
+              onSelect={handleAlbumSelect}
+              placeholder="Search for an album on Spotify..."
+            />
+            <p className="text-xs text-[#678] mt-2">
+              Search for an album to auto-fill details with real data
+            </p>
+          </div>
+        )}
 
-        {/* Album (Optional) */}
-        <div>
-          <label className="block text-sm font-bold text-white mb-2">
-            Album <span className="text-[#678] text-xs font-normal">(optional)</span>
-          </label>
-          <input
-            type="text"
-            value={album}
-            onChange={(e) => setAlbum(e.target.value)}
-            placeholder="e.g., A Night at the Opera"
-            className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
-          />
-        </div>
+        {/* Selected Album Display */}
+        {useSpotify && selectedAlbum && (
+          <div className="p-4 bg-[#2a3441] rounded-lg">
+            <div className="flex items-center gap-4 mb-3">
+              {selectedAlbum.image && (
+                <img
+                  src={selectedAlbum.image}
+                  alt={selectedAlbum.name}
+                  className="w-20 h-20 rounded object-cover"
+                />
+              )}
+              <div className="flex-1">
+                <div className="font-bold text-white text-lg">{selectedAlbum.name}</div>
+                <div className="text-[#9ab]">{selectedAlbum.artists.join(", ")}</div>
+                <div className="text-xs text-[#678]">
+                  {new Date(selectedAlbum.release_date).getFullYear()}
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={clearAlbumSelection}
+              className="text-sm text-[#00c030] hover:underline"
+            >
+              Change Album
+            </button>
+          </div>
+        )}
+
+        {/* Manual Entry (when Spotify is off or after selection) */}
+        {!useSpotify && (
+          <>
+            {/* Song/Album Title */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">
+                Song/Album Title <span className="text-[#00c030]">*</span>
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder="e.g., Bohemian Rhapsody"
+                className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
+              />
+            </div>
+
+            {/* Artist */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">
+                Artist <span className="text-[#00c030]">*</span>
+              </label>
+              <input
+                type="text"
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                required
+                placeholder="e.g., Queen"
+                className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
+              />
+            </div>
+
+            {/* Album (Optional) */}
+            <div>
+              <label className="block text-sm font-bold text-white mb-2">
+                Album <span className="text-[#678] text-xs font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={album}
+                onChange={(e) => setAlbum(e.target.value)}
+                placeholder="e.g., A Night at the Opera"
+                className="w-full bg-[#2a3441] border border-[#456] text-white placeholder-[#678] rounded px-4 py-3 focus:outline-none focus:border-[#00c030]"
+              />
+            </div>
+          </>
+        )}
 
         {/* Your Thoughts */}
         <div>

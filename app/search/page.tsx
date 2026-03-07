@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -45,7 +45,7 @@ interface List {
   users: { name: string };
 }
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q") || "";
 
@@ -421,5 +421,18 @@ function EmptyState({ message }: { message: string }) {
       <div className="text-6xl mb-4">🔍</div>
       <p className="text-[#9ab] text-lg">{message}</p>
     </div>
+  );
+}
+
+// Wrapped export with Suspense
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="spinner h-12 w-12"></div>
+      </div>
+    }>
+      <SearchContent />
+    </Suspense>
   );
 }
